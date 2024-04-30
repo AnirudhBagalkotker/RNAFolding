@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RNA Folding</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html">
+    <h1 id="rna-folding-algorithm">RNA Folding Algorithm</h1>
+    <h2 id="overview">Overview</h2>
+    <p><strong>Objective</strong> :- The primary goal is to develop a computational model that can accurately predict
+      RNA secondary structures. This model must strictly adhere to biological and physical constraints to reflect
+      realistic RNA behavior. A specific focus is on ensuring that each base pairing in the structure is separated by at
+      least four intervening bases, which helps simulate natural RNA folding and function.</p>
+    <p><strong>Key Constraints</strong> :-</p>
+    <ul>
+      <li><strong>Base Pairing Specificity</strong>: This constraint is based on the Watson-Crick base pairing rules
+        where adenine (A) pairs exclusively with uracil (U), and cytosine © pairs with guanine (G). This specificity
+        must be strictly enforced in the model to maintain biological accuracy.</li>
+      <li><strong>Intervening Base Requirement</strong>: To prevent the RNA molecule from forming unrealistically sharp
+        turns, there must be at least four intervening bases between each pair. This constraint ensures the physical
+        feasibility of the RNA structure and is crucial for simulating realistic molecular dynamics.</li>
+      <li><strong>Non-overlapping</strong>: Each nucleotide in the RNA sequence can only be part of one base pair. This
+        rule prevents the formation of complex and biologically impossible structures where a base might otherwise
+        engage in multiple pairings.</li>
+      <li><strong>No Knots</strong>: The RNA structure should not form any physical knots. Ensuring that the structure
+        is knot-free is essential for its biological functionality and for simplifying computational modeling.</li>
+    </ul>
+    <p><strong>Input</strong> :- The algorithm takes an RNA string as input. RNA strings consist of characters from the
+      alphabet {A, U, C, G}, representing the bases Adenine, Uracil, Cytosine, and Guanine respectively.</p>
+    <p><strong>Output</strong> :- Return the structure set with the start and end indices of all pairs, representing the
+      secondary structure.</p>
+    <h2 id="implementation">Implementation</h2>
+    <ol>
+      <li>
+        <p>Initialise the dynamic programming vector(opt) whenever <strong>i&gt;= j - 4</strong>.</p>
+      </li>
+      <li>
+        <p>Calculate the maximum number of base pairs in the secondary structure using a dynamic programming approach
+          where k starts with 4 and i starts with 0 and both are incremented till n and n-k.<br>
+          2.1. Set j = i + k -1<br>
+          2.2. Compute the opt(i,j) using the recurrence relation:<br>
+          <strong>opt(i,j) = max(opt(i, j-1) , max(1 + opt(i, t-1) + opt(t+1, j-1)))</strong><br>
+          where t ranges from i to j-5 such that it is allowed to pair with j<br>
+          2.3. The rules for forming a pair are :-
+        </p>
+        <ul>
+          <li>(No sharp turns) The ends of each pair are separated by at least 4 intervening bases i.e. if (i , j) ε S,
+            then i &lt; j - 4.</li>
+          <li>The elements in each pair in S consist of either {A,U} or {C,G} (in either order).</li>
+          <li>S is a matching: no base appears in more than one pair.</li>
+          <li>(No knots) If (i,j) and (k,l) are two pairs in S, then we can’t have i &lt; k &lt; j &lt; l</li>
+        </ul>
+      </li>
+      <li>
+        <p>Secondary Structure Generation :-<br>
+          3.1. Iterate through all possible starting indices i and ending indices j.<br>
+          3.2.Check if the bases at indices i and j are complementary (A-U or U-A, C-G or G-C).<br>
+          3.3. If complementary, check if the length of the secondary structure formed by pairing these bases is greater
+          than one.<br>
+          3.4. If yes, add the pair (i, j) to the set structure, representing the start and end indices of the secondary
+          structure.</p>
+      </li>
+      <li>
+        <p>Return the secondary structure. Print the start and end indices of the secondary structure.</p>
+      </li>
+    </ol>
+    <h2 id="results">Results</h2>
+    <ol>
+      <li>
+        <p><strong>Test Case</strong> :-<br>
+          RNA sequence :- GGUGUUGACUGUUGAAUCUCAUGGCAACACC<br>
+          <img src="1.png" alt="enter image description here"><br>
+          <img src="1_.png" alt="enter image description here"><br>
+          Analysis :-
+        <p>
+          The secondary structure is represented by a series of base pairs in zero-indexed format (i, j), where i and j
+          are the indices of the paired bases.
+          The given base pairs are:
+
+          (0, 30) indicating the first base G is paired with the 31st base C.
+          (1, 29) indicating the second base G is paired with the 30th base A.
+          Other pairs follow this pattern with the corresponding indices provided.
+
+          A thorough analysis would involve verifying the consistency between the text output and the graphical
+          representation:
+
+          Each pair in the text output should correspond to a line connecting two bases in the graphical structure.
+          The unpaired bases in the graphical structure should not be part of any pair in the text output.
+        </p>
+        Time Analysis: 0.000016s
+        </p>
+      </li>
+      <li>
+        <p><strong>Test Case</strong> :-<br>
+          RNA sequence :- GGCUGGUGUGGUACAGAGAAGCCAGCC<br>
+          <img src="2.png" alt="enter image description here"><br>
+          <img src="2_.png" alt="enter image description here"><br>
+          Analysis :-
+        <p>
+          Comparing both images, we can cross-reference the base pairs given in the textual output with the graphical
+          representation to verify the accuracy of the prediction. For instance, if (0,26) is listed as a base pair, we
+          should see a line connecting the first and the last bases in the graphical representation, indicating a stem.
+        </p>
+        Time Analysis: 0.000014s
+        </p>
+      </li>
+      <li>
+        <p><strong>Test Case</strong> :-<br>
+          RNA sequence :- CAACCUCUGGCAAAAAUUGUGAAUGUUG<br>
+          <img src="3.png" alt="enter image description here"><br>
+          <img src="3_.png" alt="enter image description here"><br>
+          Analysis :-
+        <p>
+          Consistency is confirmed by matching each base pair in the textual output to the lines connecting bases in the
+          graphical image. For example, the first pair (0,27) should connect the first C with the last G in the
+          graphical representation.
+          We should verify that the base pairs follow the canonical A-U and G-C rules without any mismatches or
+          non-canonical pairs unless the model allows for wobble base pairing (G-U pairs).
+          The structure's stability can be assessed by the number and continuity of the base pairs in the stem regions.
+          More continuous base pairs typically indicate a more stable secondary structure.
+        </p>
+        Time Analysis: 0.000012s
+        </p>
+      </li>
+      <li>
+        <p><strong>Test Case</strong> :-<br>
+          RNA sequence :- UCGGCCUUUUGGCUAAGAUCAAGUGUAG<br>
+          <img src="4.png" alt="enter image description here"><br>
+          <img src="4_.png" alt="enter image description here"><br>
+          Analysis :-
+        <p>
+          A list of base pairings in the secondary structure, given in a zero-indexed format (i, j), where i is the
+          position of the first base in the pair and j is the position of the second base:
+          For example, (0, 26) indicates the first nucleotide U is paired with the 27th nucleotide A.
+          The other pairs listed follow this pattern, such as (1, 24) indicating the second nucleotide C is paired with
+          the 25th nucleotide G.
+          The pairs listed in the textual output should correspond to the pairs shown in the graphical representation.
+          Each line connecting two bases in the diagram should match a pair in the list.
+          The graphical structure should not show any base paired in a way that contradicts the list. For example, the
+          first U should only be paired with the A at position 27, not with any other nucleotide.
+        </p>
+        Time Analysis: 0.000013s
+        </p>
+      </li>
+      <li>
+        <p><strong>Test Case</strong> :-<br>
+          RNA sequence :- UUCGCCUUUUACUAAAGAUUUCCGUGG<br>
+          <img src="5.png" alt="enter image description here"><br>
+          <img src="5_.png" alt="enter image description here"><br>
+          Analysis :-
+        <p>
+          To analyze the consistency, we should verify that each base pair listed in the text output is correctly
+          illustrated in the graphical representation. For example, (0,17) should show the first U connected to the A at
+          position 18, if we are considering a zero-indexed sequence.
+          The pattern of base pairing should reflect allowed biological pairings (A-U and G-C) and maintain the minimum
+          distance rule where applicable. It's important to note that the four-base rule mentioned earlier may not be
+          applicable to this particular analysis if the model or algorithm does not enforce this specific constraint.
+          Stability of the structure can be inferred from the number of base pairs in the stem regions; more paired
+          bases generally indicate a more stable structure.
+          The algorithm's output can be compared with established databases of RNA secondary structures or predictions
+          from other established algorithms to ensure the results are within expected parameters.
+        </p>
+        Time Analysis: 0.000011s
+        </p>
+      </li>
+    </ol>
+    <h2 id="challenges">Challenges</h2>
+    <ol>
+      <li>
+        <p><strong>Complexity</strong> :- The algorithm has a time complexity of <span class="katex--inline"><span
+              class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>O</mi>
+                      <mo stretchy="false">(</mo>
+                      <msup>
+                        <mi>n</mi>
+                        <mn>3</mn>
+                      </msup>
+                      <mo stretchy="false">)</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">O(n^3)</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height: 1.06411em; vertical-align: -0.25em;"></span><span class="mord mathnormal"
+                    style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span
+                      class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span
+                          class="vlist-r"><span class="vlist" style="height: 0.814108em;"><span class=""
+                              style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut"
+                                style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span
+                                  class="mord mtight">3</span></span></span></span></span></span></span></span><span
+                    class="mclose">)</span></span></span></span></span>, where n is the length of the RNA string. This
+          implies that the time taken to predict the secondary structure grows exponentially with the length of the RNA
+          sequence.<br>
+          For large RNA sequences, this complexity may lead to impractical computation times, making the algorithm
+          inefficient for real-world applications. It may not be feasible to predict structures for long RNA sequences
+          within a reasonable timeframe.</p>
+      </li>
+      <li>
+        <p><strong>Scalability</strong> :- The algorithm’s scalability for very large RNA sequences needs to be
+          investigated to ensure it can handle real-world data efficiently. As the size of RNA sequences commonly
+          encountered in biological datasets continues to increase, it’s essential that the algorithm can scale
+          appropriately to handle these larger inputs without sacrificing performance or accuracy.</p>
+      </li>
+    </ol>
+  </div>
+</body>
+
+</html>
